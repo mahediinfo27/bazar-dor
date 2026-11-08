@@ -1,69 +1,126 @@
-import Image from "next/image";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import PriceTicker from "./components/PriceTicker";
+
+const risingProducts = [
+  { name: "পেঁয়াজ", icon: "🧅", price: 54, unit: "প্রতি কেজি", change: "২.৫%" },
+  { name: "আদা", icon: "🫚", price: 85, unit: "প্রতি কেজি", change: "৩.০%" },
+  { name: "বেগুন", icon: "🍆", price: 44, unit: "প্রতি কেজি", change: "৪.৮%" },
+  { name: "কই মাছ", icon: "🐟", price: 43, unit: "প্রতি কেজি", change: "৪.৫%" },
+  { name: "ডিম", icon: "🥚", price: 158, unit: "প্রতি ডজন", change: "৩.৯%" },
+  { name: "মাখন (১০০ গ্রাম)", icon: "🧈", price: 145, unit: "প্রতি পিস", change: "৩.৬%" },
+];
+
+const fallingProducts = [
+  { name: "আলু", icon: "🥔", price: 35, unit: "প্রতি কেজি", change: "২.১%" },
+  { name: "টমেটো", icon: "🍅", price: 45, unit: "প্রতি কেজি", change: "৩.২%" },
+  { name: "শসা", icon: "🥒", price: 30, unit: "প্রতি কেজি", change: "১.৮%" },
+];
+
+function ProductCard({
+  product,
+  falling = false,
+}: {
+  product: {
+    name: string;
+    icon: string;
+    price: number;
+    unit: string;
+    change: string;
+  };
+  falling?: boolean;
+}) {
+  const price = new Intl.NumberFormat("bn-BD").format(product.price);
+
+  return (
+    <article className="rounded-2xl border border-[#dce6dd] bg-[#fbfdfb] p-4 transition hover:-translate-y-1 hover:shadow-md">
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eff5ef] text-2xl">
+          {product.icon}
+        </div>
+
+        <div>
+          <h3 className="font-bold text-[#27332a]">{product.name}</h3>
+          <p className="text-xs text-gray-500">{product.unit}</p>
+        </div>
+      </div>
+
+      <div className="mt-3 flex items-end justify-between">
+        <div>
+          <p className="text-xs text-gray-500">আজকের দাম</p>
+          <p className="mt-1 text-lg font-extrabold text-[#263329]">
+            {price} টাকা
+          </p>
+        </div>
+
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            falling
+              ? "bg-green-50 text-green-700"
+              : "bg-red-50 text-red-600"
+          }`}
+        >
+          {falling ? "▼" : "▲"} {product.change}
+        </span>
+      </div>
+    </article>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    <>
+      <Navbar />
+      <PriceTicker />
+
+      <main className="min-h-screen bg-[#f0f5f0] pb-16">
+        <div className="mx-auto max-w-6xl px-4">
+          <Hero />
+
+          <section className="mt-10">
+            <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-[#263329]">
+              <span className="text-red-600">▲</span>
+              আজ দাম বেড়েছে
+            </h2>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {risingProducts.map((product) => (
+                <ProductCard key={product.name} product={product} />
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-10">
+            <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-[#263329]">
+              <span className="text-green-600">▼</span>
+              আজ দাম কমেছে
+            </h2>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {fallingProducts.map((product) => (
+                <ProductCard
+                  key={product.name}
+                  product={product}
+                  falling
+                />
+              ))}
+            </div>
+          </section>
+
+          <section id="সব-পণ্য" className="mt-12 scroll-mt-32">
+            <h2 className="text-2xl font-extrabold text-[#263329]">
+              সব পণ্য
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              সব নিত্যপ্রয়োজনীয় পণ্যের বাজারদর এক জায়গায়।
+            </p>
+
+            <div className="mt-5 rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500">
+              API যুক্ত হলে এখানে সব পণ্য দেখানো হবে।
+            </div>
+          </section>
         </div>
       </main>
-    </div>
+    </>
   );
 }
