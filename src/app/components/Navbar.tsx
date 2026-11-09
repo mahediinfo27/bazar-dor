@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, UserRound } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 const categories = [
   { name: "সব পণ্য", href: "/" },
@@ -31,17 +31,17 @@ export default function Navbar() {
           <div className="rounded-xl bg-green-600 p-2 text-white">
             <ShoppingCart size={24} />
           </div>
+
           <div>
             <h1 className="text-xl font-bold text-gray-900">
               বাজার দর
             </h1>
             <p className="text-xs text-gray-500">BazarDor</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {today}
+            </p>
           </div>
         </Link>
-
-        <p className="hidden text-sm text-gray-500 md:block">
-          {today}
-        </p>
 
         <div className="flex items-center gap-2">
           <Link
@@ -50,6 +50,7 @@ export default function Navbar() {
           >
             Sign In
           </Link>
+
           <Link
             href="/sign-up"
             className="rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700"

@@ -1,47 +1,46 @@
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import PriceTicker from "./components/PriceTicker";
+import { getProducts, type Product } from "@/lib/api";
 
-const risingProducts = [
-  { name: "পেঁয়াজ", icon: "🧅", price: 54, unit: "প্রতি কেজি", change: "২.৫%" },
-  { name: "আদা", icon: "🫚", price: 85, unit: "প্রতি কেজি", change: "৩.০%" },
-  { name: "বেগুন", icon: "🍆", price: 44, unit: "প্রতি কেজি", change: "৪.৮%" },
-  { name: "কই মাছ", icon: "🐟", price: 43, unit: "প্রতি কেজি", change: "৪.৫%" },
-  { name: "ডিম", icon: "🥚", price: 158, unit: "প্রতি ডজন", change: "৩.৯%" },
-  { name: "মাখন (১০০ গ্রাম)", icon: "🧈", price: 145, unit: "প্রতি পিস", change: "৩.৬%" },
-];
+function getUnit(unit: string) {
+  const units: Record<string, string> = {
+    kg: "প্রতি কেজি",
+    litre: "প্রতি লিটার",
+    dozen: "প্রতি ডজন",
+    piece: "প্রতি পিস",
+  };
 
-const fallingProducts = [
-  { name: "আলু", icon: "🥔", price: 35, unit: "প্রতি কেজি", change: "২.১%" },
-  { name: "টমেটো", icon: "🍅", price: 45, unit: "প্রতি কেজি", change: "৩.২%" },
-  { name: "শসা", icon: "🥒", price: 30, unit: "প্রতি কেজি", change: "১.৮%" },
-];
+  return units[unit] || unit;
+}
 
 function ProductCard({
   product,
-  falling = false,
 }: {
-  product: {
-    name: string;
-    icon: string;
-    price: number;
-    unit: string;
-    change: string;
-  };
-  falling?: boolean;
+  product: Product;
 }) {
-  const price = new Intl.NumberFormat("bn-BD").format(product.price);
+  const price = new Intl.NumberFormat("bn-BD").format(product.today);
+  const change = new Intl.NumberFormat("bn-BD", {
+    maximumFractionDigits: 1,
+  }).format(Math.abs(product.change.pct));
+
+  const isFalling = product.change.dir === "down";
 
   return (
     <article className="rounded-2xl border border-[#dce6dd] bg-[#fbfdfb] p-4 transition hover:-translate-y-1 hover:shadow-md">
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eff5ef] text-2xl">
-          {product.icon}
+          {product.image}
         </div>
 
         <div>
-          <h3 className="font-bold text-[#27332a]">{product.name}</h3>
-          <p className="text-xs text-gray-500">{product.unit}</p>
+          <h3 className="font-bold text-[#27332a]">
+            {product.nameBn}
+          </h3>
+          <p className="text-xs text-gray-500">
+            {getUnit(product.unit)}
+          </p>
         </div>
       </div>
 
@@ -53,25 +52,45 @@ function ProductCard({
           </p>
         </div>
 
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            falling
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-600"
-          }`}
-        >
-          {falling ? "▼" : "▲"} {product.change}
-        </span>
+        {product.change.dir !== "flat" && (
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              isFalling
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-600"
+            }`}
+          >
+            {isFalling ? "▼" : "▲"} {change}%
+          </span>
+        )}
+
+        {product.change.dir === "flat" && (
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+            অপরিবর্তিত
+          </span>
+        )}
       </div>
     </article>
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const products = await getProducts();
+
+  const risingProducts = products
+    .filter((product) => product.change.dir === "up")
+    .sort((a, b) => b.change.pct - a.change.pct)
+    .slice(0, 6);
+
+  const fallingProducts = products
+    .filter((product) => product.change.dir === "down")
+    .sort((a, b) => a.change.pct - b.change.pct)
+    .slice(0, 6);
+
   return (
     <>
       <Navbar />
-      <PriceTicker />
+      <PriceTicker products={products} />
 
       <main className="min-h-screen bg-[#f0f5f0] pb-16">
         <div className="mx-auto max-w-6xl px-4">
@@ -85,7 +104,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {risingProducts.map((product) => (
-                <ProductCard key={product.name} product={product} />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </section>
@@ -98,11 +117,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {fallingProducts.map((product) => (
-                <ProductCard
-                  key={product.name}
-                  product={product}
-                  falling
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </section>
@@ -111,12 +126,15 @@ export default function Home() {
             <h2 className="text-2xl font-extrabold text-[#263329]">
               সব পণ্য
             </h2>
+
             <p className="mt-2 text-sm text-gray-600">
               সব নিত্যপ্রয়োজনীয় পণ্যের বাজারদর এক জায়গায়।
             </p>
 
-            <div className="mt-5 rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500">
-              API যুক্ত হলে এখানে সব পণ্য দেখানো হবে।
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
           </section>
         </div>
