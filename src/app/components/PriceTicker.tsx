@@ -25,13 +25,12 @@ export default function PriceTicker({ products }: PriceTickerProps) {
             </span>
 
             <span
-              className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${
-                item.change.dir === "up"
+              className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${item.change.dir === "up"
                   ? "bg-red-50 text-red-600"
                   : item.change.dir === "down"
                     ? "bg-green-50 text-green-600"
                     : "bg-gray-100 text-gray-600"
-              }`}
+                }`}
             >
               {item.change.dir === "up"
                 ? "▲"

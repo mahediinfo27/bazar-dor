@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
+import { useSyncExternalStore } from "react";
 
 const categories = [
   { name: "সব পণ্য", href: "/" },
@@ -17,13 +18,18 @@ const categories = [
 
 export default function Navbar() {
   const pathname = usePathname();
-
-  const today = new Intl.DateTimeFormat("bn-BD", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date());
-
+  
+  const today = useSyncExternalStore(
+    () => () => {},
+    () => 
+      new Intl.DateTimeFormat("bn-BD", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(new Date()),
+      () => ""
+    );
+  
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">

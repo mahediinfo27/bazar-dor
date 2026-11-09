@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import PriceTicker from "./components/PriceTicker";
 import { getProducts, type Product } from "@/lib/api";
+import Link from "next/link";
 
 function getUnit(unit: string) {
   const units: Record<string, string> = {
@@ -28,6 +29,7 @@ function ProductCard({
   const isFalling = product.change.dir === "down";
 
   return (
+  <Link href={`/product/${product.id}`} className="block">
     <article className="rounded-2xl border border-[#dce6dd] bg-[#fbfdfb] p-4 transition hover:-translate-y-1 hover:shadow-md">
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eff5ef] text-2xl">
@@ -71,7 +73,8 @@ function ProductCard({
         )}
       </div>
     </article>
-  );
+  </Link>
+);
 }
 
 export default async function Home() {
