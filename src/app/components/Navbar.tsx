@@ -7,14 +7,16 @@ import { ShoppingCart } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
 const categories = [
+  
   { name: "সব পণ্য", href: "/" },
   { name: "চাল", href: "/category/chal" },
   { name: "ডাল", href: "/category/dal" },
   { name: "তেল", href: "/category/tel" },
-  { name: "মাছ", href: "/category/fish" },
-  { name: "মাংস", href: "/category/meat" },
-  { name: "সবজি", href: "/category/vegetables" },
-];
+  { name: "মাছ", href: "/category/mach" },
+  { name: "মাংস", href: "/category/mangsho" },
+  { name: "সবজি", href: "/category/sobji" },
+
+]
 
 export default function Navbar() {
   const pathname = usePathname();
